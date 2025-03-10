@@ -26,13 +26,14 @@
 #define LINE_RIGHT_PIN 2
 
 #define MOTOR_PULSES 3840.0f
-#define WHEEL_DIAMETER_MM 51.8
+#define WHEEL_DIAMETER_MM 69
+#define COEFF_TRACTION 
 
 #define SOUND_MM_PER_US 0.343
 
-#define LINE_LEFT_THLD 320
+#define LINE_LEFT_THLD 420
 #define LINE_CENTRE_THLD 250
-#define LINE_RIGHT_THLD 400
+#define LINE_RIGHT_THLD 420
 
 class Wheels {
   public:
@@ -61,4 +62,3 @@ float GetDistance();
 void EchoISR();
 
 int LineFollowState();
-

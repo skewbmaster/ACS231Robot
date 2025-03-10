@@ -1,6 +1,6 @@
 #include "definitions.hh"
 
-#define LOOP_TIME 25 // Loop should run at 40Hz
+#define LOOP_TIME 30 // Loop should run at 40Hz
 #define DEBUG
 
 //Motor::Motor(int In1Pin, int In2Pin, int PWMPin, int offset, int STBYPin)
@@ -37,14 +37,13 @@ void loop() {
   //int spd = Serial.parseInt() - 128;
   float dist = wheels.GetWheelMovedDistance();
   if (abs(dist) < WHEEL_DIAMETER_MM * PI) {
-    wheels.Drive(100);
+    wheels.Drive(150);
   }
   else {
     wheels.Brake();
   }
 
-  //Serial.println();
-
   //int _i = LineFollowState();
   //Serial.println(_i);
+
 }

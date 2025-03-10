@@ -30,20 +30,28 @@ void Wheels::Drive(int speed) {
   if (speed > 0) {
     digitalWrite(MOTOR_A_I1, HIGH);
     digitalWrite(MOTOR_A_I2, LOW);
+    digitalWrite(MOTOR_B_I1, HIGH);
+    digitalWrite(MOTOR_B_I2, LOW);
   }
   else {
     digitalWrite(MOTOR_A_I1, LOW);
     digitalWrite(MOTOR_A_I2, HIGH);
+    digitalWrite(MOTOR_B_I1, HIGH);
+    digitalWrite(MOTOR_B_I2, LOW);
   }
 
   analogWrite(MOTOR_A_PWM_PIN, abs(speed));
+  analogWrite(MOTOR_B_PWM_PIN, abs(speed));
 
 }
 
 void Wheels::Brake() {
   digitalWrite(MOTOR_A_I1, HIGH);
   digitalWrite(MOTOR_A_I2, HIGH);
+  digitalWrite(MOTOR_B_I1, HIGH);
+  digitalWrite(MOTOR_B_I2, HIGH);
   analogWrite(MOTOR_A_PWM_PIN, 150);
+  analogWrite(MOTOR_B_PWM_PIN, 150);
 }
 
 float Wheels::GetWheelMovedDistance() {
@@ -103,11 +111,11 @@ int LineFollowState() {
   bool rightDark = rightV > LINE_RIGHT_THLD;
 
 
-  /*Serial.print(leftDark);
+  Serial.print(leftV);
   Serial.print(" ");
-  Serial.print(centreDark);
+  Serial.print(centreV);
   Serial.print(" ");
-  Serial.println(rightDark);*/
+  Serial.println(rightV);
   return 0b100*leftDark + 0b10*centreDark + 0b1*rightDark;
 }
 
