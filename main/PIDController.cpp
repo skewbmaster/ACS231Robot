@@ -10,7 +10,6 @@ PIDController::PIDController(float Kp, float Ki, float Kd, float maxBound, float
 
   summed_error = 0;
   prev_error = 0;
-  prev_output = minBound;
   prev_time = millis();
 }
 
@@ -28,4 +27,8 @@ float PIDController::Output(float error) {
 
   output = min(max(output, minOut), maxOut);
   return output;
+}
+
+void PIDController::ResetIntegral() {
+  summed_error = 0.0;
 }

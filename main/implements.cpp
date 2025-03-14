@@ -30,8 +30,8 @@ void Wheels::Drive(int speed) {
   if (speed > 0) {
     digitalWrite(MOTOR_A_I1, HIGH);
     digitalWrite(MOTOR_A_I2, LOW);
-    digitalWrite(MOTOR_B_I1, HIGH);
-    digitalWrite(MOTOR_B_I2, LOW);
+    digitalWrite(MOTOR_B_I1, LOW);
+    digitalWrite(MOTOR_B_I2, HIGH);
   }
   else {
     digitalWrite(MOTOR_A_I1, LOW);
@@ -45,6 +45,24 @@ void Wheels::Drive(int speed) {
 
 }
 
+void Wheels::Rotate(bool counterClock = true) {
+  if (counterClock) {
+    digitalWrite(MOTOR_A_I1, LOW);
+    digitalWrite(MOTOR_A_I2, HIGH);
+    digitalWrite(MOTOR_B_I1, LOW);
+    digitalWrite(MOTOR_B_I2, HIGH);
+  }
+  else {
+    digitalWrite(MOTOR_A_I1, HIGH);
+    digitalWrite(MOTOR_A_I2, LOW);
+    digitalWrite(MOTOR_B_I1, HIGH);
+    digitalWrite(MOTOR_B_I2, LOW);
+  }
+
+  analogWrite(MOTOR_A_PWM_PIN, 100);
+  analogWrite(MOTOR_B_PWM_PIN, 100);
+}
+
 void Wheels::Brake() {
   digitalWrite(MOTOR_A_I1, HIGH);
   digitalWrite(MOTOR_A_I2, HIGH);
@@ -54,8 +72,16 @@ void Wheels::Brake() {
   analogWrite(MOTOR_B_PWM_PIN, 150);
 }
 
-float Wheels::GetWheelMovedDistance() {
+float Wheels::GetWheelAMovedDistance() {
   return COEFF_TRACTION * WHEEL_DIAMETER_MM * PI * encA_Count / MOTOR_PULSES;
+}
+float Wheels::GetWheelBMovedDistance() {
+  return COEFF_TRACTION * WHEEL_DIAMETER_MM * PI * encB_Count / MOTOR_PULSES;
+}
+
+void Wheels::ResetEncoderCounts() {
+  encA_Count = 0;
+  encB_Count = 0;
 }
 
 volatile bool echoInProgress;
