@@ -55,10 +55,8 @@ void Wheels::Brake() {
 }
 
 float Wheels::GetWheelMovedDistance() {
-  return WHEEL_DIAMETER_MM * PI * encA_Count / MOTOR_PULSES;
+  return COEFF_TRACTION * WHEEL_DIAMETER_MM * PI * encA_Count / MOTOR_PULSES;
 }
-
-
 
 volatile bool echoInProgress;
 static unsigned long risingTimestamp;

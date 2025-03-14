@@ -2,11 +2,11 @@
 
 class PIDController {
   public:
-    PIDController(float, float, float, float, float);
-    float Output(float, float);
-    void UpdateK(float, float, float);
+    PIDController(float Kp, float Ki, float Kd, float maxBound, float minBound);
+    float Output(float error);
+    void UpdateK(float Kp, float Ki, float Kd);
   private:
     float Kp, Ki, Kd, maxOut, minOut;
-    float dt;
-    float prev_output;
+    float summed_error;
+    float prev_error, prev_output, prev_time;
 };

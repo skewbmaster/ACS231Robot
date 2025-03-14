@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ROBOT_DEFINITIONS_H
+#define ROBOT_DEFINITIONS_H
 // PWM OUT
 
 #define MOTOR_A_PWM_PIN 6
@@ -27,7 +28,7 @@
 
 #define MOTOR_PULSES 3840.0f
 #define WHEEL_DIAMETER_MM 69
-#define COEFF_TRACTION 
+#define COEFF_TRACTION 1.0
 
 #define SOUND_MM_PER_US 0.343
 
@@ -62,3 +63,5 @@ float GetDistance();
 void EchoISR();
 
 int LineFollowState();
+
+#endif
