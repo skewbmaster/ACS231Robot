@@ -36,6 +36,9 @@
 #define ROBOT_WHEEL_SONIC_DIST 105
 #define ROBOT_DIAMETER 192
 
+#define SERVO_ARM_L1 182
+#define SERVO_ARM_L2 185
+
 #define SOUND_MM_PER_US 0.340
 
 #define LINE_LEFT_THLD 420
@@ -65,9 +68,15 @@ void MotorB_ChannelB_ISR();
 
 class ServoArm {
   public:
-    ServoArm();
+    ServoArm(Servo* Servo1, Servo* Servo2, float defaultPosX, float defaultPosY);
+    void MoveArm(float newPosX, float newPosY);
   private:
-    float pos;
+    float posX, posY;
+    float L1_2, L2_2, L1_L2;
+    Servo* S1, S2;
+
+    float getTheta1();
+    float getTheta2();
 };
 
 // Run in setup once

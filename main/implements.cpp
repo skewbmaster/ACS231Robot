@@ -84,6 +84,49 @@ void Wheels::ResetEncoderCounts() {
   encB_Count = 0;
 }
 
+ServoArm::ServoArm(Servo* Servo1, Servo* Servo2, float defaultPosX, float defaultPosY) {
+  posX = defaultPosX;
+  posY = defaultPosY;
+
+  L1_2 = SERVO_ARM_L1 * SERVO_ARM_L1;
+  L2_2 = SERVO_ARM_L2 * SERVO_ARM_L2;
+  L1_L2 = SERVO_ARM_L1 * SERVO_ARM_L2;
+
+  S1 = Servo1;
+  S2 = Servo2;
+}
+
+void ServoArm::MoveArm(float newPosX, float newPosY) {
+  posX = newPosX;
+  posY = newPosY;
+  S1->writeMicroseconds(1500);
+  S2->writeMicroseconds(1500);
+}
+
+ServoArm::getTheta1() {
+  float x_2 = posX * posX;
+  float y_2 = posY * posY;
+
+  float sigma = 2 * (L1_L2*L1_L2 + L1_2*x_2 + L1_2*y_2 + L2_2*x_2 + L2_2*y_2 - x_2*y_2);
+  sigma -= L1_2*L1_2 + L2_2*L2_2 + x_2*x_2 + y_2*y_2;
+  sigma = sqrt(sigma);
+
+  float theta = 2 * atan2(2*SERVO_ARM_L1*posY + sigma,
+                           L1_2 + 2*SERVO_ARM_L1*posX - L2_2 + x_2 + y_2);
+
+  return theta;
+}
+
+ServoArm::getTheta2() {
+  float x_2 = posX * posX;
+  float y_2 = posY * posY;
+  
+  float part1 = 2*L1_L2 + x_2 + y_2 - L1_2 - L2_2;
+  float part2 = 2*L1_L2 + L1_2 + L2_2 - x_2 - y_2;
+  float theta = -2 * atan2(sqrt(part1*part2), part1);
+  return theta;
+}
+
 volatile bool echoInProgress;
 static unsigned long risingTimestamp;
 volatile float lastReadDistance;

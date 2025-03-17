@@ -15,6 +15,8 @@ Servo S2;
 Wheels wheels;
 PIDController movementControl = PIDController(0, 0, 0, 0, 0);
 
+ServoArm armControl;
+
 RobotState stateMachine;
 
 unsigned long previousMillis = 0;
@@ -33,6 +35,9 @@ void setup() {
 
   //S1.attach(SERVO_S1_PIN);
   //S2.attach(SERVO_S2_PIN);
+
+  armControl = ServoArm(&S1, &S2, 330, -50);
+  armControl.
 
   stateMachine = INIT_ROTATE_1;
 }
@@ -131,7 +136,7 @@ void loop() {
     }
 
     case BACKWARDS_WALL: {
-      if (BackwardRobot(85, 2)) {
+      if (BackwardRobot(85, 1)) {
         stateMachine = ROTATE_WALL;
         delay(150);
         wheels.ResetEncoderCounts();
