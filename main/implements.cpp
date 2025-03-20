@@ -1,5 +1,6 @@
 #include "definitions.hh"
 #include "Arduino.h"
+#include <Servo.h>
 
 volatile signed long encA_Count;
 volatile signed long encB_Count;
@@ -99,11 +100,28 @@ ServoArm::ServoArm(Servo* Servo1, Servo* Servo2, float defaultPosX, float defaul
 void ServoArm::MoveArm(float newPosX, float newPosY) {
   posX = newPosX;
   posY = newPosY;
-  S1->writeMicroseconds(1500);
-  S2->writeMicroseconds(1500);
+
+  theta1Cache = GetTheta1();
+  theta2Cache = GetTheta2();
+
+  int s1pwm = RadToPWM(theta1Cache, SERVO_S1_REF, SERVO_S1_PI2);
+  int s2pwm = RadToPWM(theta2Cache, SERVO_S2_REF, SERVO_S2_PI2);
+
+  /*Serial.print(GetTheta1());
+  Serial.print(" ");
+  Serial.print(GetTheta2());
+  Serial.print(" ");
+  Serial.println(s2pwm);*/
+
+  S1->writeMicroseconds(s1pwm);
+  S2->writeMicroseconds(s2pwm);
 }
 
-ServoArm::getTheta1() {
+int ServoArm::RadToPWM(float servoRad, float zeroRef, float piOverTwoRef) {
+  return (int) ((piOverTwoRef - zeroRef) * (2.0 / PI) * servoRad + zeroRef);
+}
+
+float ServoArm::GetTheta1() {
   float x_2 = posX * posX;
   float y_2 = posY * posY;
 
@@ -117,13 +135,13 @@ ServoArm::getTheta1() {
   return theta;
 }
 
-ServoArm::getTheta2() {
+float ServoArm::GetTheta2() {
   float x_2 = posX * posX;
   float y_2 = posY * posY;
   
   float part1 = 2*L1_L2 + x_2 + y_2 - L1_2 - L2_2;
   float part2 = 2*L1_L2 + L1_2 + L2_2 - x_2 - y_2;
-  float theta = -2 * atan2(sqrt(part1*part2), part1);
+  float theta = 2 * atan2(sqrt(part1*part2), part1);
   return theta;
 }
 
@@ -178,11 +196,11 @@ int LineFollowState() {
   bool rightDark = rightV > LINE_RIGHT_THLD;
 
 
-  Serial.print(leftV);
+  /*Serial.print(leftV);
   Serial.print(" ");
   Serial.print(centreV);
   Serial.print(" ");
-  Serial.println(rightV);
+  Serial.println(rightV);*/
   return 0b100*leftDark + 0b10*centreDark + 0b1*rightDark;
 }
 
