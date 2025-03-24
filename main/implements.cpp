@@ -77,7 +77,7 @@ float Wheels::GetWheelAMovedDistance() {
   return COEFF_TRACTION * WHEEL_DIAMETER_MM * PI * encA_Count / MOTOR_PULSES;
 }
 float Wheels::GetWheelBMovedDistance() {
-  return COEFF_TRACTION * WHEEL_DIAMETER_MM * PI * encB_Count / MOTOR_PULSES;
+  return COEFF_MOTORB_ENC_ERROR * COEFF_TRACTION * WHEEL_DIAMETER_MM * PI * encB_Count / MOTOR_PULSES;
 }
 
 void Wheels::ResetEncoderCounts() {

@@ -39,7 +39,7 @@ void setup() {
   SetupSonicSensor();
 
   wheels = Wheels();
-  movementControl = PIDController(0.5, 0.0001, 0.2, 200, 28);
+  movementControl = PIDController(0.5, 0.0001, 0.2, 170, 28);
 
   S1.attach(SERVO_S1_PIN);
   S2.attach(SERVO_S2_PIN);
@@ -50,7 +50,7 @@ void setup() {
   S1.writeMicroseconds(SERVO_S1_RESTING_PWM);
   S2.writeMicroseconds(SERVO_S2_RESTING_PWM);
 
-  stateMachine = FORWARD_3;
+  stateMachine = INIT_ROTATE_1;
 }
 
 void loop() {
@@ -134,7 +134,7 @@ void loop() {
     }
 
     case FORWARD_INDEFINITE: {
-      wheels.Drive(130);
+      wheels.Drive(140);
       PollDistance();
       float readDistance = GetDistance();
       if (readDistance > 0 && readDistance < 80) {
@@ -154,7 +154,7 @@ void loop() {
     }
 
     case BACKWARDS_WALL: {
-      if (BackwardRobot(68, 2)) {
+      if (BackwardRobot(71, 4)) {
         stateMachine = ROTATE_WALL;
         delay(150);
         wheels.ResetEncoderCounts();
@@ -191,7 +191,7 @@ void loop() {
     }
 
     case RESET_ARM: {
-      if (ForwardRobot(50, 3)) {
+      if (ForwardRobot(60, 5)) {
         S2.writeMicroseconds(SERVO_S2_RESTING_PWM);
         //armControl->MoveArm(DRAW_X_POS, DRAW_INIT_HEIGHT/6.0);
         delay(1000);
@@ -232,10 +232,20 @@ void loop() {
     }
 
     case FORWARD_3: {
-      if (ForwardRobot(740, 5)) {
-        delay(150);
+      if (ForwardRobot(600, 5)) {
+        wheels.Brake();
+        delay(200);
         wheels.ResetEncoderCounts();
         movementControl.ResetIntegral();
+        stateMachine = ROTATE_LAST;
+      }
+      break;
+    }
+
+    case ROTATE_LAST: {
+      if (RotateRobot(90, false)) {
+        delay(150);
+        wheels.ResetEncoderCounts();
         stateMachine = DROP_PEN;
         dropPenTimestamp = millis();
       }
@@ -243,11 +253,15 @@ void loop() {
     }
 
     case DROP_PEN: {
-      if (currentMillis - dropPenTimestamp < 3000) {
+      if (currentMillis - dropPenTimestamp < 6000) {
         armControl->MoveArm(240, -10);
         delay(50);
         armControl->MoveArm(250, 0);
         delay(50);
+      }
+      else {
+        //S1.writeMicroseconds(SERVO_S1_RESTING_PWM);
+        //S2.writeMicroseconds(SERVO_S2_RESTING_PWM);
       }
     }
 
@@ -260,7 +274,13 @@ void loop() {
 
 // Returns true when complete
 bool ForwardRobot(float distance, float cutoff) {
-  float avg_travelled = (abs(wheels.GetWheelAMovedDistance()) + abs(wheels.GetWheelBMovedDistance())) / 2.0;
+  float wheelAdist = wheels.GetWheelAMovedDistance();
+  float wheelBdist = wheels.GetWheelBMovedDistance();
+  Serial.print(wheelAdist);
+  Serial.print(" ");
+  Serial.println(wheelBdist);
+
+  float avg_travelled = (abs(wheelAdist) + abs(wheelBdist)) / 2.0;
   float error = distance - avg_travelled;
   if (abs(error) > cutoff) {
     float motorPower = movementControl.Output(error);
